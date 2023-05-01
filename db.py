@@ -1,10 +1,13 @@
 import pymssql
 from prettytable import PrettyTable
+from fpdf import FPDF
 
 server = r'NBMS3-VM\NB_SQLExpress'
 username = 'Northland'
 password = '4258thSt$%'
 database = 'NBEstTransmitted'
+
+
 
 def connect():
     try:
@@ -52,5 +55,34 @@ def get_trim_by_estimate_id(estimate_id):
     else:
         return None
     
+def generate_report(results):
+    pdf = FPDF()
+    pdf.add_page()
+    # add font
+    pdf.set_font('Arial', size=12)
+
+    # Set up column headings and widths
+    col_names = ['Description', 'Color', 'Order Quantity', 'First Name', 'Last Name', 'Order Date']
+    col_widths = [40, 30, 30, 40, 40, 40]
+
+    # Set up table headers
+    for i in range(len(col_names)):
+        pdf.cell(col_widths[i], 10, col_names[i], border=1)
+    pdf.ln()
+
+    # Add data rows to table
+    for row in results:
+        for i in range(len(row)):
+            pdf.cell(col_widths[i], 10, str(row[i]), border=1)
+        pdf.ln()
+
+    # Output PDF file
+    pdf.output(name = "report.pdf")
+    
 if __name__ == "__main__":
-    get_trim_by_estimate_id(150985)
+    results = get_trim_by_estimate_id(150985)
+    if results:
+        generate_report(results)
+        print("Report Generated!")
+    else:
+        print("Couldn't generate report")
