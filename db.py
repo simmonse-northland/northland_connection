@@ -42,18 +42,6 @@ def get_trim_by_estimate_id(estimate_id):
     FROM dbo.Customers_Detail_tbl
     WHERE EstimateID = {estimate_id} AND Category = 'Trim'
     """
-    # sql="""
-    # USE NBEstTransmitted;
-    # SELECT FIRSTNAME, LASTNAME, Order_Date
-    # FROM dbo.Customers_Main_tbl
-    # WHERE EstimateID = 150985 """
-    # sql = f"""
-    #     USE NBEstTransmitted;
-    #     SELECT cdm.Description, cdm.COLOR, cdm.ORDQTY, cmt.FIRSTNAME, cmt.LASTNAME, cmt.Order_Date
-    #     FROM dbo.Customers_Detail_tbl cdm
-    #     JOIN dbo.Customers_Main_tbl cmt ON cdm.EstimateID = cmt.EstimateID
-    #     WHERE cdm.EstimateID = {estimate_id} AND cdm.Category = 'Trim'
-    #     """
     conn = connect()
     if conn:
         cursor = conn.cursor()
@@ -73,34 +61,38 @@ def get_trim_by_estimate_id(estimate_id):
         return None
     
 def generate_report(data, headers):
-    pdf = FPDF()
+    pdf = FPDF(unit='in', format=(4, 6))
+    pdf.set_margins(left=0.1, top=0.1, right=0.1)
+    pdf.bottom_margin = 0.1
+    pdf.set_auto_page_break(True, margin=0.1)
     pdf.add_page()
     # set font for headers
-    pdf.set_font('Arial', 'B', 16)
-    pdf.cell(0, 10, f"Report for {headers['FIRSTNAME']} {headers['LASTNAME']}", 0, 1, 'C')
-    pdf.cell(0, 10, f"Order Date: {headers['Order_Date']}   Estimate ID: {headers['EstimateID']}", 0, 1, 'C')
-    pdf.ln(20)
+    pdf.set_font('Arial', 'B', 9)
+    pdf.cell(0, 0.3, f"Report for {headers['FIRSTNAME']} {headers['LASTNAME']}", 0, 1, 'C')
+    pdf.cell(0, 0.3, f"Order Date: {headers['Order_Date']}   Estimate ID: {headers['EstimateID']}", 0, 1, 'C')
+    pdf.ln(0.2)
 
     # set font for table
-    pdf.set_font('Arial', size=12)
+    pdf.set_font('Arial', size=8)
 
     # Set up column headings and widths
     col_names = ['Description', 'Color', 'Order Quantity']
-    col_widths = [60, 30, 30]
+    col_widths = [2, 1, 0.8]
 
     # Set up table headers
     for i in range(len(col_names)):
-        pdf.cell(col_widths[i], 10, col_names[i], border=1)
+        pdf.cell(col_widths[i], 0.2, col_names[i], border=1)
     pdf.ln()
 
     # Add data rows to table
     for row in data:
         for i in range(len(row)):
-            pdf.cell(col_widths[i], 10, str(row[i]), border=1)
+            pdf.cell(col_widths[i], 0.2, str(row[i]), border=1)
         pdf.ln()
 
     # Output PDF file
-    pdf.output(name = "report.pdf")
+    pdf.output(name="report.pdf")
+
     
 if __name__ == "__main__":
     data = get_trim_by_estimate_id(150985)
