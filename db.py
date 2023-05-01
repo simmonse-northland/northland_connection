@@ -30,8 +30,9 @@ def get_headers_by_estimate_id(estimate_id):
         result = cursor.fetchall()
         conn.close()
         if result and len(result[0]) == 4:
-            print({'FIRSTNAME': result[0][0], 'LASTNAME': result[0][1], 'Order_Date': result[0][2], 'EstimateID': result[0][3]})
-            return {'FIRSTNAME': result[0][0], 'LASTNAME': result[0][1], 'Order_Date': result[0][2], 'EstimateID': result[0][3]}
+            order_date = result[0][2].strftime('%Y-%m-%d')
+            print({'FIRSTNAME': result[0][0], 'LASTNAME': result[0][1], 'Order_Date': order_date, 'EstimateID': result[0][3]})
+            return {'FIRSTNAME': result[0][0], 'LASTNAME': result[0][1], 'Order_Date': order_date, 'EstimateID': result[0][3]}
         else:
             return None
 
@@ -67,13 +68,13 @@ def generate_report(data, headers):
     pdf.set_auto_page_break(True, margin=0.1)
     pdf.add_page()
     # set font for headers
-    pdf.set_font('Arial', 'B', 9)
-    pdf.cell(0, 0.3, f"Report for {headers['FIRSTNAME']} {headers['LASTNAME']}", 0, 1, 'C')
-    pdf.cell(0, 0.3, f"Order Date: {headers['Order_Date']}   Estimate ID: {headers['EstimateID']}", 0, 1, 'C')
-    pdf.ln(0.2)
+    pdf.cell_margin = 0.1
+    pdf.set_font('Arial', 'B', 6)
+    pdf.cell(0, 0.2, f"Customer: {headers['FIRSTNAME']} {headers['LASTNAME']} Date: {headers['Order_Date']} Order: {headers['EstimateID']}", 0, 1, 'C')
+    pdf.ln(0.1)
 
     # set font for table
-    pdf.set_font('Arial', size=8)
+    pdf.set_font('Arial', size=6)
 
     # Set up column headings and widths
     col_names = ['Description', 'Color', 'Order Quantity']
@@ -81,13 +82,13 @@ def generate_report(data, headers):
 
     # Set up table headers
     for i in range(len(col_names)):
-        pdf.cell(col_widths[i], 0.2, col_names[i], border=1)
+        pdf.cell(col_widths[i], 0.1, col_names[i], border=1)
     pdf.ln()
 
     # Add data rows to table
     for row in data:
         for i in range(len(row)):
-            pdf.cell(col_widths[i], 0.2, str(row[i]), border=1)
+            pdf.cell(col_widths[i], 0.15, str(row[i]), border=1)
         pdf.ln()
 
     # Output PDF file
