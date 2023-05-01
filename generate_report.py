@@ -17,7 +17,7 @@ def generate_report(data, headers):
 
     # Set up column headings and widths
     col_names = ['Description', 'Color', 'Qty']
-    col_widths = [1.9, 0.6, 0.4]
+    col_widths = [1.9, 1.2, 0.4]
 
     # Set up table headers
     for i in range(len(col_names)):
