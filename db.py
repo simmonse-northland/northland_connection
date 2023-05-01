@@ -13,13 +13,20 @@ def connect():
         print("Error", e)
         return None
     
-def execute_query(sql):
+def execute_query(sql, params=None):
     conn = connect()
-    if conn:
-        cursor = conn.cursor()
-        cursor.execute(sql)
+    cursor = conn.cursor()
+    try:
+        if params:
+            cursor.execute(sql, params)
+        else:
+            cursor.execute(sql)
         result = cursor.fetchall()
-        conn.close()
+        conn.commit()
         return result
-    else:
-        return None
+    except:
+        conn.rollback()
+        raise
+    finally:
+        cursor.close()
+        conn.close()
