@@ -69,26 +69,26 @@ def generate_report(data, headers):
     pdf.add_page()
     # set font for headers
     pdf.cell_margin = 0.1
-    pdf.set_font('Arial', 'B', 6)
-    pdf.cell(0, 0.2, f"Customer: {headers['FIRSTNAME']} {headers['LASTNAME']} Date: {headers['Order_Date']} Order: {headers['EstimateID']}", 0, 1, 'C')
+    pdf.set_font('Arial', 'B', 12)
+    pdf.cell(0, 0.2, f"{headers['FIRSTNAME']} {headers['LASTNAME']} {headers['Order_Date']} Order# {headers['EstimateID']}", 0, 1, 'C')
     pdf.ln(0.1)
 
     # set font for table
-    pdf.set_font('Arial', size=6)
+    pdf.set_font('Arial', 'B', size=10)
 
     # Set up column headings and widths
-    col_names = ['Description', 'Color', 'Order Quantity']
-    col_widths = [2, 1, 0.8]
+    col_names = ['Description', 'Color', 'Qty']
+    col_widths = [1.9, 0.6, 0.4]
 
     # Set up table headers
     for i in range(len(col_names)):
-        pdf.cell(col_widths[i], 0.1, col_names[i], border=1)
+        pdf.cell(col_widths[i], 0.17, col_names[i], border=1)
     pdf.ln()
 
     # Add data rows to table
     for row in data:
         for i in range(len(row)):
-            pdf.cell(col_widths[i], 0.15, str(row[i]), border=1)
+            pdf.cell(col_widths[i], 0.17, str(row[i]), border=1)
         pdf.ln()
 
     # Output PDF file
@@ -96,8 +96,9 @@ def generate_report(data, headers):
 
     
 if __name__ == "__main__":
-    data = get_trim_by_estimate_id(150985)
-    headers = get_headers_by_estimate_id(150985)
+    estimate_id_number = 150985
+    data = get_trim_by_estimate_id(estimate_id_number)
+    headers = get_headers_by_estimate_id(estimate_id_number)
     if data:
         generate_report(data, headers)
         print("Report Generated!")
