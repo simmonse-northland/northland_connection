@@ -20,8 +20,9 @@ class MyApp(tk.Tk):
         headers = OrderData.get_headers_for_trim_labels(contract_number)
         print(headers)
         if data:
-            OrderData.generate_report(headers, data)
-            print("Report Generated!")
+            OrderData.generate_report_all_trim(headers, data)
+            OrderData.generate_report_each_trim(headers, contract_number)
+            print("Reports Generated!")
         else:
             print("Couldn't generate report")
 

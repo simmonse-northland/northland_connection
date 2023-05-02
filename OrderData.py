@@ -1,6 +1,7 @@
 from db import execute_query
 from fpdf import FPDF
 import os
+import subprocess
 
 # use contract number instead of estimate ID
 
@@ -75,6 +76,8 @@ class OrderData:
 
     @classmethod
     def generate_pdf(cls, headers, data, filename):
+        if not os.path.exists('pdf_reports'):
+            os.makedirs('pdf_reports')
         pdf = FPDF(unit='in', format=(4, 6))
         pdf.set_margins(left=0.1, top=0.1, right=0.1)
         pdf.bottom_margin = 0.1
@@ -97,14 +100,15 @@ class OrderData:
                 pdf.cell(col_widths[i], 0.17, str(row[i]), border=1)
             pdf.ln()
 
-        pdf.output(name=filename)
+        filename = filename.replace('/', '-')
+        pdf.output(name=f"pdf_reports/{filename}")
 
     @classmethod
-    def generate_report(cls, headers, data):
+    def generate_report_all_trim(cls, headers, data):
         cls.generate_pdf(headers, data, "report.pdf")
 
     @classmethod
-    def generate_reports(cls, headers, contract):
+    def generate_report_each_trim(cls, headers, contract):
         if not os.path.exists('pdf_reports'):
             os.makedirs('pdf_reports')
         grouped_trim = cls.get_grouped_trim(contract)
@@ -114,5 +118,18 @@ class OrderData:
             color = trim_tuple[1]
             qty = trim_tuple[2]
 
-            filename = f"pdf_reports/{description.replace('/', '-')}.pdf"
+            filename = f"{description} {color} {qty}".replace('/', '_').replace('"', '').replace(':', '') + ".pdf"
             cls.generate_pdf(headers, [(description, color, qty)], filename)
+
+    # @classmethod
+    # def print_pdf_report(cls, filename):
+    #     try:
+    #         printer_name = 'YOUR_PRINTER_NAME'  # replace with the name of your printer
+    #         process = subprocess.Popen([f'AcroRd32.exe /t "{filename}" "{printer_name}"'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    #         stdout, stderr = process.communicate()
+    #         if stderr:
+    #             raise Exception(f"Error while printing {filename}: {stderr}")
+    #         else:
+    #             print(f"Successfully printed {filename}")
+    #     except Exception as e:
+    #         print(f"Error while printing {filename}: {e}")

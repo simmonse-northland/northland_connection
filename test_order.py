@@ -1,7 +1,7 @@
 from OrderData import OrderData
 from prettytable import PrettyTable
 
-order_id = 7704588
+order_id = 882379
 order = OrderData(order_id)
 
 # column_names = order.get_column_names()
@@ -23,5 +23,6 @@ if grouped_trim:
 else:
     print("No grouped trim found for this order.")
 
-order.generate_reports(headers, order_id)
+order.generate_report_all_trim(headers, trim)
+order.generate_report_each_trim(headers, order_id)
 # print("report generated!")
