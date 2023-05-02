@@ -1,10 +1,11 @@
 import pymssql
+from config import DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_DATABASE
 import os
 
-server = os.environ['DB_SERVER']
-username = os.environ['DB_USERNAME']
-password = os.environ['DB_PASSWORD']
-database = os.environ['DB_DATABASE']
+server = DB_SERVER
+username = DB_USERNAME
+password = DB_PASSWORD
+database = DB_DATABASE
 
 def connect():
     try:
