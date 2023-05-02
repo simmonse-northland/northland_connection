@@ -1,9 +1,10 @@
 import pymssql
+import os
 
-server = r'NBMS3-VM\NB_SQLExpress'
-username = 'Northland'
-password = '4258thSt$%'
-database = 'NBEstTransmitted'
+server = os.environ['DB_SERVER']
+username = os.environ['DB_USERNAME']
+password = os.environ['DB_PASSWORD']
+database = os.environ['DB_DATABASE']
 
 def connect():
     try:
