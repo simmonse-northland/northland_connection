@@ -6,21 +6,18 @@ class MyApp(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("My Application")
+        contract_label = tk.Label(self, text="Contract Number:")
+        contract_label.pack()
+        self.contract_entry = tk.Entry(self)
+        self.contract_entry.pack()
 
-        # Add a label and an entry field for the estimate ID
-        estimate_id_label = tk.Label(self, text="Estimate ID:")
-        estimate_id_label.pack()
-        self.estimate_id_entry = tk.Entry(self)
-        self.estimate_id_entry.pack()
-
-        # Add a button to generate the report
         generate_report_button = tk.Button(self, text="Generate Report", command=self.generate_report_on_click)
         generate_report_button.pack()
 
     def generate_report_on_click(self):
-        estimate_id_number = int(self.estimate_id_entry.get())
-        data = OrderData.get_trim(estimate_id_number)
-        headers = OrderData.get_headers_for_trim_labels(estimate_id_number)
+        contract_number = int(self.contract_entry.get())
+        data = OrderData.get_trim(contract_number)
+        headers = OrderData.get_headers_for_trim_labels(contract_number)
         print(headers)
         if data:
             OrderData.generate_report(headers, data)
