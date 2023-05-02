@@ -47,23 +47,6 @@ class OrderData:
         else:
             return None
 
-    # @classmethod
-    # def get_headers(cls, order_id):
-    #     sql = """
-    #     USE NBEstTransmitted;
-    #     SELECT FIRSTNAME, LASTNAME, Order_Date, EstimateID
-    #     FROM dbo.Customers_Main_tbl
-    #     WHERE EstimateID = %s
-    #     """
-    #     params = (order_id,)
-    #     result = execute_query(sql, params)
-    #     if result and len(result) == 4:
-    #         order_date = result[2].strftime('%Y-%m-%d')
-    #         print({'FIRSTNAME': result[0][0], 'LASTNAME': result[0][1], 'Order_Date': order_date, 'EstimateID': result[0][3]})
-    #         return {'FIRSTNAME': result[0][0], 'LASTNAME': result[0][1], 'Order_Date': order_date, 'EstimateID': result[0][3]}
-    #     else:
-    #         return None
-
     @classmethod
     def get_trim(cls, order_id):
         sql = """
