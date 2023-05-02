@@ -1,11 +1,11 @@
-from queries import get_trim_by_estimate_id, get_headers_by_estimate_id
+from OrderData import get_trim, get_headers
 from generate_report import generate_report
 
 
 if __name__ == "__main__":
     estimate_id_number = 150985
-    data = get_trim_by_estimate_id(estimate_id_number)
-    headers = get_headers_by_estimate_id(estimate_id_number)
+    data = get_trim(estimate_id_number)
+    headers = get_headers(estimate_id_number)
     if data:
         generate_report(data, headers)
         print("Report Generated!")
