@@ -20,9 +20,10 @@ class MyApp(tk.Tk):
     def generate_report_on_click(self):
         estimate_id_number = int(self.estimate_id_entry.get())
         data = OrderData.get_trim(estimate_id_number)
-        headers = OrderData.get_headers()
+        headers = OrderData.get_headers_for_trim_labels(estimate_id_number)
+        print(headers)
         if data:
-            OrderData.generate_report(data, headers)
+            OrderData.generate_report(headers, data)
             print("Report Generated!")
         else:
             print("Couldn't generate report")
