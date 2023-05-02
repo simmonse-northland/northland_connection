@@ -2,12 +2,29 @@ from db import execute_query
 from fpdf import FPDF
 import os
 import subprocess
+import datetime
 
 # use contract number instead of estimate ID
 
 class OrderData:
     def __init__(self, contract):
         self.contract = contract
+
+
+    @classmethod
+    def get_contracts(cls):
+        current_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(current_date)
+        sql = f"""
+        SELECT DISTINCT CONTRACT 
+        FROM dbo.Customers_Main_tbl 
+        WHERE ReqDate >= '{current_date}'
+        """
+        result = execute_query(sql)
+        if result:
+            return result
+        else: 
+            return None
 
 
     @classmethod
