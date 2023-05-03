@@ -125,7 +125,7 @@ class OrderData:
         pdf.add_page()
 
         # Add logo
-        pdf.image('CVST Logo 512x512.png', x=0, y=0, w=0.5)
+        pdf.image('CVST Logo 512x512.png', x=0.05, y=0.05, w=0.5)
 
         # Set vertical position of current cell to leave room for logo
         pdf.y += 0.5
@@ -143,21 +143,21 @@ class OrderData:
                 cell_width = pdf.get_string_width(str(cell))
                 max_widths[i] = max(max_widths[i], cell_width)
 
-# Calculate column widths based on maximum length
-        col_widths = [width + 0.05 for width in max_widths]
+        # Calculate column widths based on maximum length
+        # max_widths = [width + 0.01 for width in max_widths]
         print(max_widths)
-        print(col_widths)
+        print(max_widths)
 
         # Print table headers
         pdf.set_font('Arial', 'B', size=10)
         for i in range(len(col_names)):
-            pdf.cell(col_widths[i], 0.17, col_names[i], border=1)
+            pdf.cell(max_widths[i], 0.17, col_names[i], border=1)
         pdf.ln()
 
         # Print table rows
         for row in data:
             for i in range(len(row)):
-                pdf.cell(col_widths[i], 0.17, str(row[i]), border=1)
+                pdf.cell(max_widths[i], 0.17, str(row[i]), border=1)
             pdf.ln()
 
         filename = filename.replace('/', '-')
