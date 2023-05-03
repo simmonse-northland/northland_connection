@@ -57,7 +57,6 @@ class OrderData:
         GROUP BY Description;
         """
         params = (contract,)
-        print(sql)
         result = execute_query(sql, params)
         if result:
             return result

@@ -2,7 +2,7 @@ from OrderData import OrderData
 from GenerateReport import GenerateReport
 from prettytable import PrettyTable
 
-contract_number = 993085
+contract_number = 7704588
 order = OrderData(contract_number)
 report = GenerateReport()
 
@@ -31,6 +31,6 @@ else:
 contracts = order.get_all_contracts()
 print(f"{contracts}")
 
-report.generate_report_all_trim(headers, trim)
+report.generate_report_all_trim(headers, grouped_trim)
 report.generate_report_each_trim(headers, contract_number)
 print("report generated!")

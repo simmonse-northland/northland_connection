@@ -1,6 +1,7 @@
 import os
 from fpdf import FPDF
 from OrderData import OrderData
+from datetime import datetime
 import subprocess
 
 class GenerateReport:
@@ -12,39 +13,32 @@ class GenerateReport:
         pdf.set_margins(left=0.1, top=0.1, right=0.1)
         pdf.bottom_margin = 0.1
         pdf.set_auto_page_break(True, margin=0.1)
+        
+
         pdf.add_page()
+        pdf.image('CVST Logo 512x512.png', x=2.25, y=0.05, w=1.6)
 
-        # Add logo
-        pdf.image('CVST Logo 512x512.png', x=0.05, y=0.05, w=0.5)
-
-        # Set vertical position of current cell to leave room for logo
-        pdf.y += 0.5
-
-        # Print headers
         pdf.set_font('Arial', 'B', 12)
-        pdf.cell(0, 0.2, f"{headers['FIRSTNAME']} {headers['LASTNAME']} {headers['Order_Date']} Order# {headers['CONTRACT']}", 0, 1, 'C')
+        
+        pdf.multi_cell(0, 0.2, f"Manufactured in the USA By:\nCV Steel Trim, Inc.\n2894 58th St.\nEau Claire, Wi 54703", 0, "L")
         pdf.ln(0.1)
-
-        # Find maximum length for each column
+        pdf.multi_cell(0, 0.2, f"{headers['FIRSTNAME']} {headers['LASTNAME']}\n{headers['Order_Date']}\nContract# {headers['CONTRACT']}", 0, "L")
+        pdf.y += 0.2
+    # find correct widths for each column based on string width
         col_names = ['Description', 'Color', 'Qty']
-        max_widths = [pdf.get_string_width(col_name) for col_name in col_names]
-        for row in data:
-            for i, cell in enumerate(row):
-                cell_width = pdf.get_string_width(str(cell))
-                max_widths[i] = max(max_widths[i], cell_width)
-
-        # Calculate column widths based on maximum length
-        # max_widths = [width + 0.01 for width in max_widths]
-        print(max_widths)
-        print(max_widths)
-
-        # Print table headers
+        # max_widths = [pdf.get_string_width(col_name) for col_name in col_names]
+        # for row in data:
+        #     for i, cell in enumerate(row):
+        #         cell_width = pdf.get_string_width(str(cell))
+        #         max_widths[i] = max(max_widths[i], cell_width)
+    # headers
+        max_widths = [2.25, 1.2, 0.35]
         pdf.set_font('Arial', 'B', size=10)
         for i in range(len(col_names)):
             pdf.cell(max_widths[i], 0.17, col_names[i], border=1)
         pdf.ln()
 
-        # Print table rows
+    # rows
         for row in data:
             for i in range(len(row)):
                 pdf.cell(max_widths[i], 0.17, str(row[i]), border=1)

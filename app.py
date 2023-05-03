@@ -29,13 +29,6 @@ class CVS(tk.Tk):
         self.contract_data_frame = tk.Frame(self)
         self.contract_data_frame.pack(side='left', fill='both', expand=True)
         
-
-       
-
-
-
-
-
         generate_report_button = tk.Button(self, text="Generate Report", command=self.generate_report)
         generate_report_button.pack()
 
