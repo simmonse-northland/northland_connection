@@ -31,18 +31,29 @@ class OrderData:
     def get_grouped_trim(cls, contract):
         sql = """
         USE NBEstTransmitted;
-        SELECT Description, STRING_AGG(COLOR, ', ') AS Colors, SUM(ORDQTY) AS TotalQty
-        FROM dbo.Customers_Detail_tbl
-        WHERE CONTRACT = %s AND Category = 'Trim'
-        GROUP BY Description
+        SELECT 
+            Description, 
+            STRING_AGG(COLOR, ', ') AS Colors, 
+            SUM(ORDQTY) AS TotalQty
+        FROM (
+            SELECT 
+                Description, 
+                COLOR, 
+                SUM(ORDQTY) AS ORDQTY
+            FROM dbo.Customers_Detail_tbl
+            WHERE CONTRACT = %s AND Category = 'Trim'
+            GROUP BY Description, COLOR
+        ) AS subquery
+        GROUP BY Description;
         """
         params = (contract,)
+        print(sql)
         result = execute_query(sql, params)
         if result:
             return result
         else:
             return None
-
+        
 
     @classmethod
     def get_column_names(cls):
@@ -68,10 +79,10 @@ class OrderData:
         """
         params = (contract)
         result = execute_query(sql, params)
-        if result and len(result[0]) == 4:
-            order_date = result[0][2].strftime('%Y-%m-%d')
-            print({'FIRSTNAME': result[0][0], 'LASTNAME': result[0][1], 'Order_Date': order_date, 'CONTRACT': result[0][3]})
-            return {'FIRSTNAME': result[0][0], 'LASTNAME': result[0][1], 'Order_Date': order_date, 'CONTRACT': result[0][3]}
+        if result:
+            firstname, lastname, order_date, contract = result[0]
+            order_date_str = order_date.strftime('%Y-%m-%d')
+            return {'FIRSTNAME': firstname, 'LASTNAME': lastname, 'Order_Date': order_date_str, 'CONTRACT': contract}
         else:
             return None
 
@@ -130,13 +141,10 @@ class OrderData:
             os.makedirs('pdf_reports')
         grouped_trim = cls.get_grouped_trim(contract)
 
-        for trim_tuple in grouped_trim:
-            description = trim_tuple[0]
-            color = trim_tuple[1]
-            qty = trim_tuple[2]
-
+        for description, color, qty in grouped_trim:
             filename = f"{description} {color} {qty}".replace('/', '_').replace('"', '').replace(':', '') + ".pdf"
             cls.generate_pdf(headers, [(description, color, qty)], filename)
+
 
     # @classmethod
     # def print_pdf_report(cls, filename):
