@@ -4,12 +4,18 @@ from OrderData import OrderData
 from datetime import datetime
 import subprocess
 
-class GenerateReport:
+class GenerateReport(FPDF):
+    def footer(self):
+        self.set_y(-0.3)
+        self.set_font('Arial', "I", 8)
+        current_datetime = datetime.now().strftime("%I:%M %p, %B %d, %Y")
+        self.cell(0, 0.1, 'Page %s - %s' % (self.page_no(), current_datetime), 0, 0, 'C')
+
     @classmethod
     def generate_pdf(cls, headers, data, filename):
         if not os.path.exists('pdf_reports'):
             os.makedirs('pdf_reports')
-        pdf = FPDF(unit='in', format=(4, 6))
+        pdf = GenerateReport(unit='in', format=(4, 6))
         pdf.set_margins(left=0.1, top=0.1, right=0.1)
         pdf.bottom_margin = 0.1
         pdf.set_auto_page_break(True, margin=0.1)
