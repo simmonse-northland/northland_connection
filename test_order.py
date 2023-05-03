@@ -1,37 +1,39 @@
 from OrderData import OrderData
 from prettytable import PrettyTable
 
-order_id = 882379
-order = OrderData(order_id)
+contract_number = 882379
+order = OrderData(contract_number)
 
+
+# contract = order.get_one_contract(contract_number)
 # column_names = order.get_column_names()
 # print(f"Column Names: {column_names}")
 
-# trim = order.get_trim(order_id)
-# print(f"Trim Labels: {trim}")
+trim = order.get_trim(contract_number)
+print(f"Trim Labels: {trim}")
 
-# headers = order.get_headers_for_trim_labels(order_id)
-# print(f"Headers for Trim: {headers}")
+headers = order.get_headers_for_trim_labels(contract_number)
+print(f"Headers for Trim: {headers}")
 
-grouped_trim = order.get_grouped_trim(order_id)
-print(grouped_trim)
-if grouped_trim:
-    table = PrettyTable()
-    table.field_names = ["Description", "Color", "Total OrdQty"]
-    for row in grouped_trim:
-        table.add_row(row)
-    print(table)
-else:
-    print("No grouped trim found for this order.")
-
-
-
-
-# contracts = order.get_contracts()
-# print(f"{contracts}CONTRACTS CONTRACTS CONTRACTS")
+# grouped_trim = order.get_grouped_trim(contract_number)
+# print(grouped_trim)
+# if grouped_trim:
+#     table = PrettyTable()
+#     table.field_names = ["Description", "Color", "Total OrdQty"]
+#     for row in grouped_trim:
+#         table.add_row(row)
+#     print(table)
+# else:
+#     print("No grouped trim found for this order.")
 
 
 
-# order.generate_report_all_trim(headers, trim)
-# order.generate_report_each_trim(headers, order_id)
-# print("report generated!")
+
+# contracts = order.get_all_contracts()
+# print(f"{contracts}")
+
+
+
+order.generate_report_all_trim(headers, trim)
+# order.generate_report_each_trim(headers, contract_number)
+print("report generated!")

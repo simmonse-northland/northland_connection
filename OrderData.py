@@ -10,9 +10,22 @@ class OrderData:
     def __init__(self, contract):
         self.contract = contract
 
-
     @classmethod
-    def get_contracts(cls):
+    def get_one_contract(cls, contract):
+        sql="""
+        USE NBEstTransmitted;
+        SELECT CONTRACT
+        FROM dbo.Customers_Main_tbl
+        WHERE CONTRACT = %s
+        """
+        params = (contract)
+        result = execute_query(sql, params)
+        if result:
+            return result
+        else: 
+            return None
+    @classmethod
+    def get_all_contracts(cls):
         current_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         print(current_date)
         sql = f"""
@@ -100,8 +113,7 @@ class OrderData:
             return result
         else:
             return None
-        
-
+    
     @classmethod
     def generate_pdf(cls, headers, data, filename):
         if not os.path.exists('pdf_reports'):
@@ -111,18 +123,38 @@ class OrderData:
         pdf.bottom_margin = 0.1
         pdf.set_auto_page_break(True, margin=0.1)
         pdf.add_page()
-        pdf.cell_margin = 0.1
+
+        # Add logo
+        pdf.image('CVST Logo 512x512.png', x=0, y=0, w=0.5)
+
+        # Set vertical position of current cell to leave room for logo
+        pdf.y += 0.5
+
+        # Print headers
         pdf.set_font('Arial', 'B', 12)
         pdf.cell(0, 0.2, f"{headers['FIRSTNAME']} {headers['LASTNAME']} {headers['Order_Date']} Order# {headers['CONTRACT']}", 0, 1, 'C')
         pdf.ln(0.1)
-        pdf.set_font('Arial', 'B', size=10)
-        col_names = ['Description', 'Color', 'Qty']
-        col_widths = [1.9, 1.2, 0.4]
 
+        # Find maximum length for each column
+        col_names = ['Description', 'Color', 'Qty']
+        max_widths = [pdf.get_string_width(col_name) for col_name in col_names]
+        for row in data:
+            for i, cell in enumerate(row):
+                cell_width = pdf.get_string_width(str(cell))
+                max_widths[i] = max(max_widths[i], cell_width)
+
+# Calculate column widths based on maximum length
+        col_widths = [width + 0.05 for width in max_widths]
+        print(max_widths)
+        print(col_widths)
+
+        # Print table headers
+        pdf.set_font('Arial', 'B', size=10)
         for i in range(len(col_names)):
             pdf.cell(col_widths[i], 0.17, col_names[i], border=1)
         pdf.ln()
 
+        # Print table rows
         for row in data:
             for i in range(len(row)):
                 pdf.cell(col_widths[i], 0.17, str(row[i]), border=1)
@@ -130,6 +162,9 @@ class OrderData:
 
         filename = filename.replace('/', '-')
         pdf.output(name=f"pdf_reports/{filename}")
+
+
+
 
     @classmethod
     def generate_report_all_trim(cls, headers, data):
