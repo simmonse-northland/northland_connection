@@ -1,8 +1,10 @@
 from OrderData import OrderData
 from GenerateReport import GenerateReport
 from prettytable import PrettyTable
-
-contract_number = 7704588
+# this one needs to wrap the color column
+contract_number = 993085
+# this one looks good
+# contract_nnumber = 7704588
 order = OrderData(contract_number)
 report = GenerateReport()
 
@@ -34,3 +36,11 @@ print(f"{contracts}")
 report.generate_report_all_trim(headers, grouped_trim)
 report.generate_report_each_trim(headers, contract_number)
 print("report generated!")
+
+# report.pdf_to_zpl()
+
+# report.print_pdf()
+# mac_address ="48:a4:93:bc:92:6a"  # Replace with the MAC address of your Zebra printer
+# filename = "pdf_reports/report.pdf"  # Replace with the filename of the PDF file you want to print
+
+# report.print_pdf(mac_address, filename)
