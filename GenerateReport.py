@@ -2,18 +2,11 @@ import os
 from fpdf import FPDF
 from OrderData import OrderData
 from datetime import datetime
-from PIL import Image
+# from PIL import Image
 import pdfkit
-# from zplgrf import GRF
-import subprocess
-import zlib
-import base64
 
-def png_to_base64(image_path):
-    with open(image_path, "rb") as image_file:
-        encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-        return f"data:image/png;base64,{encoded_string}"
 
+current_date = datetime.now().strftime("%d:%m:%Y")
 
 class GenerateReport(FPDF):
     @classmethod
@@ -40,7 +33,8 @@ class GenerateReport(FPDF):
                         th, td {{
                             padding: 2px;
                             text-align: left;
-                            border: 2px solid #000000;
+                            font-weight: bold;
+                            border: 1px solid #000000;
                         }}
                     </style>
                 </head>
