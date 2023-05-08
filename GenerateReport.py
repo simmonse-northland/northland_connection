@@ -5,14 +5,31 @@ from datetime import datetime
 # from PIL import Image
 import pdfkit
 
+DEFAULT_OPTIONS = {
+    'enable-local-file-access': None,
+    'page-height': '6in',
+    'page-width': '4in',
+    'margin-top': '0.05in',
+    'margin-right': '0.05in',
+    'margin-bottom': '0.05in',
+    'margin-left': '0.05in',
+}
 
-footer = datetime.now().strftime("%d:%m:%Y")
+LANDSCAPE_OPTIONS = {
+    'orientation': 'Landscape',
+}
+
+PORTRAIT_OPTIONS = {
+    'orientation': 'Portrait',
+}
+
 
 class GenerateReport():
     @staticmethod
     def generate_html_report(headers, data):
         # define HTML content
         logo_path = r"H:\basic_csv_transfer\CVST_Logo_512x512.png"
+        printed_at = datetime.now().strftime("%d:%m:%Y")
         html = f'''
             <html>
                 <head>
@@ -74,62 +91,61 @@ class GenerateReport():
                 </tr>
             '''
         # close html
-        html += '''
+        html += f'''
                     </table>
+                    <div>{printed_at}</div>
                 </body>
             </html>
             '''
         return html
     @staticmethod
-    def genertate_html_title(headers):
+    def generate_html_title(headers):
         html = f'''
             <html>
                 <body>
-                    {headers['FIRSTNAME']} {headers['LASTNAME']}<br>
-                    Contract# {headers['CONTRACT']}</p>
+                    <div style="height: 100vh;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 175pt;
+                        line-height: 1.2;
+                        font-family: Arial, sans-serif;">
+                        {headers['FIRSTNAME']} {headers['LASTNAME']}<br>
+                        Contract# {headers['CONTRACT']}
+                    </div>
                 </body>
             </html>
-            '''     
+        '''     
         return html
 
     @classmethod
-    def generate_pdf(cls, filename, html):
-        if not os.path.exists('pdf_reports'):
-                os.makedirs('pdf_reports')
-        # generate HTML content
-        
-        
+    def generate_pdf(cls, filename, html, headers, options):
+        if not os.path.exists(f"{headers['CONTRACT']}_trim_prints"):
+                os.makedirs(f"{headers['CONTRACT']}_trim_prints")
         filename = filename.replace('/', '-')
         config = pdfkit.configuration(wkhtmltopdf='C:/Program Files (x86)/wkhtmltopdf/bin/wkhtmltopdf.exe')
-        options={
-            'enable-local-file-access': None,
-            'page-height': '6in',
-            'page-width': '4in', 
-            'margin-top': "0.05in",
-            'margin-right': "0.05in",
-            'margin-bottom': "0.05in",
-            'margin-left': "0.05in",
-            }
-        pdfkit.from_string(html, f'pdf_reports/{filename}', options=options, configuration=config)
+        pdfkit.from_string(html, f"{headers['CONTRACT']}_trim_prints\{filename}", options=options, configuration=config)
         return filename
         
     @classmethod
     def generate_report_all_trim(cls, headers, data):
+        options = dict(DEFAULT_OPTIONS)
         html = cls.generate_html_report(headers, data)
-        cls.generate_pdf("report.pdf", html)
+        cls.generate_pdf("Report.pdf", html, headers, options)
 
     @classmethod
     def generate_report_title(cls, headers):
-        html = cls.genertate_html_title(headers)
-        cls.generate_pdf("title.pdf", html)
+        options = dict(DEFAULT_OPTIONS)
+        options.update(LANDSCAPE_OPTIONS)
+        html = cls.generate_html_title(headers)
+        cls.generate_pdf("Title.pdf", html, headers, options)
 
     @classmethod
     def generate_report_each_trim(cls, headers, contract):
-        if not os.path.exists('pdf_reports'):
-            os.makedirs('pdf_reports')
+        options = dict(DEFAULT_OPTIONS)
         grouped_trim = OrderData.get_grouped_trim(contract)
 
         for description, color, qty in grouped_trim:
             data = [(description, color, qty)]
             filename = f"{description} {color} {qty}".replace('/', '_').replace('"', '').replace(':', '') + ".pdf"
-            cls.generate_pdf(filename, cls.generate_html_report(headers, data))
+            cls.generate_pdf(filename, cls.generate_html_report(headers, data), headers, options)
