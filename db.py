@@ -7,17 +7,17 @@ username = DB_USERNAME
 password = DB_PASSWORD
 database = DB_DATABASE
 
-def connect():
+def connect(db):
     try:
-        conn = pymssql.connect(server=server, user=username, password=password, database=database)
+        conn = pymssql.connect(server=DB_SERVER, user=DB_USERNAME, password=DB_PASSWORD, database=db)
         print("Connected")
         return conn
     except pymssql.Error as e:
         print("Error", e)
         return None
     
-def execute_query(sql, params=None):
-    conn = connect()
+def execute_query(db, sql, params=None):
+    conn = connect(db)
     cursor = conn.cursor()
     try:
         if params:
