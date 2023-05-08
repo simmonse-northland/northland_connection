@@ -1,23 +1,18 @@
 import os
-from fpdf import FPDF
+# from fpdf import FPDF
 from OrderData import OrderData
 from datetime import datetime
 # from PIL import Image
 import pdfkit
 
 
-current_date = datetime.now().strftime("%d:%m:%Y")
+footer = datetime.now().strftime("%d:%m:%Y")
 
-class GenerateReport(FPDF):
-    @classmethod
-    def generate_pdf(cls, headers, data, filename):
-        if not os.path.exists('pdf_reports'):
-            os.makedirs('pdf_reports')
-        
-        # Load the image file using PIL
-        logo_path = r"H:\basic_csv_transfer\CVST_Logo_512x512.png"
-        
+class GenerateReport():
+    @staticmethod
+    def generate_html_report(headers, data):
         # define HTML content
+        logo_path = r"H:\basic_csv_transfer\CVST_Logo_512x512.png"
         html = f'''
             <html>
                 <head>
@@ -35,6 +30,15 @@ class GenerateReport(FPDF):
                             text-align: left;
                             font-weight: bold;
                             border: 1px solid #000000;
+                        }}
+                        .footer {{
+                            position: fixed;
+                            bottom: 0;
+                            width: 100%;
+                            text-align: center;
+                            font-size: 12px;
+                            color: #888888;
+                            font-family: Arial, sans-serif;
                         }}
                     </style>
                 </head>
@@ -69,14 +73,32 @@ class GenerateReport(FPDF):
                     <td>{row[2]}</td>
                 </tr>
             '''
-        # close HTML content
+        # close html
         html += '''
                     </table>
                 </body>
             </html>
             '''
+        return html
+    @staticmethod
+    def genertate_html_title(headers):
+        html = f'''
+            <html>
+                <body>
+                    {headers['FIRSTNAME']} {headers['LASTNAME']}<br>
+                    Contract# {headers['CONTRACT']}</p>
+                </body>
+            </html>
+            '''     
+        return html
+
+    @classmethod
+    def generate_pdf(cls, filename, html):
+        if not os.path.exists('pdf_reports'):
+                os.makedirs('pdf_reports')
+        # generate HTML content
         
-        # convert HTML to PDF
+        
         filename = filename.replace('/', '-')
         config = pdfkit.configuration(wkhtmltopdf='C:/Program Files (x86)/wkhtmltopdf/bin/wkhtmltopdf.exe')
         options={
@@ -86,12 +108,20 @@ class GenerateReport(FPDF):
             'margin-top': "0.05in",
             'margin-right': "0.05in",
             'margin-bottom': "0.05in",
-            'margin-left': "0.05in"
+            'margin-left': "0.05in",
             }
         pdfkit.from_string(html, f'pdf_reports/{filename}', options=options, configuration=config)
+        return filename
+        
     @classmethod
     def generate_report_all_trim(cls, headers, data):
-        cls.generate_pdf(headers, data, "report.pdf")
+        html = cls.generate_html_report(headers, data)
+        cls.generate_pdf("report.pdf", html)
+
+    @classmethod
+    def generate_report_title(cls, headers):
+        html = cls.genertate_html_title(headers)
+        cls.generate_pdf("title.pdf", html)
 
     @classmethod
     def generate_report_each_trim(cls, headers, contract):
@@ -100,7 +130,6 @@ class GenerateReport(FPDF):
         grouped_trim = OrderData.get_grouped_trim(contract)
 
         for description, color, qty in grouped_trim:
+            data = [(description, color, qty)]
             filename = f"{description} {color} {qty}".replace('/', '_').replace('"', '').replace(':', '') + ".pdf"
-            cls.generate_pdf(headers, [(description, color, qty)], filename)
-
-
+            cls.generate_pdf(filename, cls.generate_html_report(headers, data))
