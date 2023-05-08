@@ -2,7 +2,8 @@ from OrderData import OrderData
 from GenerateReport import GenerateReport
 from prettytable import PrettyTable
 # this one needs to wrap the color column
-contract_number = 7704588
+# contract_number = 993085
+contract_number = 993085
 # this one looks good
 # contract_nnumber = 7704588
 order = OrderData(contract_number)

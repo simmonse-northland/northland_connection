@@ -4,24 +4,25 @@ from OrderData import OrderData
 from datetime import datetime
 # from PIL import Image
 import pdfkit
-
+printed_at = datetime.now().strftime("%I:%M %p, %B %d, %Y")
 DEFAULT_OPTIONS = {
     'enable-local-file-access': None,
     'page-height': '6in',
     'page-width': '4in',
     'margin-top': '0.05in',
     'margin-right': '0.05in',
-    'margin-bottom': '0.05in',
+    'margin-bottom': '0.25in',
     'margin-left': '0.05in',
+    'footer-right': f"{printed_at}",
+    'footer-left': '[page] of [topage]',
+    'footer-font-size': 8,
+    'footer-spacing' : 1
 }
 
 LANDSCAPE_OPTIONS = {
     'orientation': 'Landscape',
 }
 
-PORTRAIT_OPTIONS = {
-    'orientation': 'Portrait',
-}
 
 
 class GenerateReport():
@@ -29,7 +30,7 @@ class GenerateReport():
     def generate_html_report(headers, data):
         # define HTML content
         logo_path = r"H:\basic_csv_transfer\CVST_Logo_512x512.png"
-        printed_at = datetime.now().strftime("%d:%m:%Y")
+        
         html = f'''
             <html>
                 <head>
@@ -47,15 +48,6 @@ class GenerateReport():
                             text-align: left;
                             font-weight: bold;
                             border: 1px solid #000000;
-                        }}
-                        .footer {{
-                            position: fixed;
-                            bottom: 0;
-                            width: 100%;
-                            text-align: center;
-                            font-size: 12px;
-                            color: #888888;
-                            font-family: Arial, sans-serif;
                         }}
                     </style>
                 </head>
@@ -93,7 +85,6 @@ class GenerateReport():
         # close html
         html += f'''
                     </table>
-                    <div>{printed_at}</div>
                 </body>
             </html>
             '''
