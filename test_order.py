@@ -31,5 +31,7 @@ report.generate_report_all_trim(headers, grouped_trim)
 report.generate_report_each_trim(headers, contract_number)
 report.generate_report_title(headers)
 print("report generated!")
+report.split_pdf('993085_trim_prints')
+print('split????')
 
 
