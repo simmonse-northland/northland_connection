@@ -6,6 +6,11 @@ from datetime import datetime
 import pdfkit
 from pathlib import Path
 from PyPDF2 import PdfReader, PdfWriter
+import subprocess
+import win32print
+import io
+import time
+from pywinauto import Application, timings
 
 
 printed_at = datetime.now().strftime("%I:%M %p, %B %d, %Y")
@@ -13,15 +18,15 @@ DEFAULT_OPTIONS = {
     'enable-local-file-access': None,
     'page-height': '6in',
     'page-width': '4in',
-    'margin-top': '0.05in',
-    'margin-right': '0.05in',
-    'margin-bottom': '0.25in',
-    'margin-left': '0.05in',
-    'footer-right': f"{printed_at}",
-    'footer-left': '[page] of [topage]',
-    'footer-font-size': 8,
-    'footer-spacing' : 1
+    'margin-top': '0.1in',
+    'margin-right': '0.1in',
+    'margin-bottom': '0.1in',
+    'margin-left': '0.1in',
 }
+    # 'footer-right': f"{printed_at}",
+    # 'footer-left': '[page] of [topage]',
+    # 'footer-font-size': 8,
+    # 'footer-spacing' : -2
 
 LANDSCAPE_OPTIONS = {
     'orientation': 'Landscape',
@@ -166,3 +171,11 @@ class GenerateReport():
                         print(f"File {pdf_path} has been split into {num_pages} pages.")
                     else:
                         print(f"File {pdf_path} has only 1 page, no need to split.")
+    @classmethod
+    def open_foxit(cls, folder):
+        foxit_reader_path = r"C:\Program Files (x86)\Foxit Software\Foxit PDF Reader\FoxitPDFReader.exe"
+        for filename in os.listdir(folder):
+            if filename.endswith('.pdf'):
+                file_path = os.path.join(folder, filename)
+                subprocess.Popen([foxit_reader_path, file_path])
+

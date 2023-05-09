@@ -32,6 +32,8 @@ report.generate_report_each_trim(headers, contract_number)
 report.generate_report_title(headers)
 print("report generated!")
 report.split_pdf('993085_trim_prints')
-print('split????')
+print('reports with multiple pages have been split!')
+# report.open_foxit(fr'H:\basic_csv_transfer\{contract_number}_trim_prints')
+report.open_foxit(fr'H:\basic_csv_transfer\{contract_number}_trim_prints')
 
 
